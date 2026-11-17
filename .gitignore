@@ -40,4 +40,8 @@ build/
 uploads/
 uploads-documents/
 
+node_modules/
+**/node_modules/
+**/dist/
+
 *.log
