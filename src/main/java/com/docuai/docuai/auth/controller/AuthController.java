@@ -1,9 +1,6 @@
 package com.docuai.docuai.auth.controller;
 
-import com.docuai.docuai.auth.dto.LoginRequest;
-import com.docuai.docuai.auth.dto.LoginResponse;
-import com.docuai.docuai.auth.dto.RegisterRequest;
-import com.docuai.docuai.auth.dto.RegisterResponse;
+import com.docuai.docuai.auth.dto.*;
 import com.docuai.docuai.auth.service.AuthService;
 import com.docuai.docuai.entity.User;
 import jakarta.validation.Valid;
@@ -38,6 +35,18 @@ public class AuthController {
             @Valid @RequestBody LoginRequest request){
         LoginResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        String response = authService.sendforgotPassword(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/reset-password-otp")
+    public ResponseEntity<String> resetPasswordWithOtp(@Valid @RequestBody ResetPasswordOtpRequest request) {
+        authService.resetPasswordWithOtp(request);
+        return ResponseEntity.ok("Password successfully updated. You can now sign in.");
     }
 
 

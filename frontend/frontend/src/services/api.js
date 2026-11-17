@@ -51,6 +51,15 @@ export async function deleteDocument(documentId) {
   await api.delete(`/documents/${documentId}`);
 }
 
+export async function sendForgotPasswordOtp(email) {
+  const response = await api.post("/auth/forgot-password", { email });
+  return response.data;
+}
+export async function resetPasswordWithOtp(email, otp, newPassword) {
+  const response = await api.post("/auth/reset-password-otp", { email, otp, newPassword });
+  return response.data;
+}
+
 export async function askQuestion(question) {
   const response = await api.post("/documents/ask", { question });
   return response.data;

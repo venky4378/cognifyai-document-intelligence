@@ -63,22 +63,31 @@ public class DocumentQuestionAnswerService {
             return new DocumentAnswerResponse("I counldn't find any relevant information in the uploaded documents.", List.of());
         }
 
+        List<com.docuai.docuai.entity.Document> userDocs = documentRepository.findByUserId(userId);
+        String userDocList = userDocs.isEmpty()
+                ? "No documents currently uploaded."
+                : userDocs.stream().map(d -> "• " + d.getFileName()).collect(Collectors.joining("\n"));
+
         String context = relevantChunks.stream()
                 .map(Document::getText)
                 .collect(Collectors.joining("\n\n"));
 
         String answer =  chatClient.prompt()
                 .system("""
-                        You are SmartPrep AI, a document-based study assistants for users.
-                        Answer the users questions using the provided document Context.
-                        If the context does not contains the answer,clearly say that the uploaded document 
-                        do not provide enough information.
-                        Do not invent facts.Explain answer clean and concisely.
-                        """).user("""
+                        You are DocuAI, an intelligent document assistant.
+                        Answer user questions using the provided Document Context and the list of documents uploaded in the workspace.
+                        
+                        The user currently has these uploaded files in their workspace:
+                        %s
+                        
+                        If the user asks what documents they have uploaded or asks to list them, list their document names clearly.
+                        For questions about the content, answer using the Document Context.
+                        Always format answers cleanly using markdown (bullet points, bold text, or tables when appropriate).
+                        """.formatted(userDocList)).user("""
                         Document Context: 
                         %s
                         
-                        Student question:
+                        User question:
                         %s 
                         """.formatted(context, question))
                 .call().content();
